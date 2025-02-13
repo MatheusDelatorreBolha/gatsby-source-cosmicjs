@@ -14,15 +14,15 @@ module.exports = async ({
   bucketSlug,
   objectType,
   apiAccess
-}) => {
-  const timeLabel = `Fetch Cosmic JS data for (${objectType})`;
+}) => {  
+  const timeLabel = `Fetch Cosmic JS data for (${objectType.name})`;
   console.time(timeLabel);
-  console.log(`Starting to fetch data from Cosmic JS (${objectType})`);
+  console.log(`Starting to fetch data from Cosmic JS (${objectType.name})`);
   let objects = [];
-  const limit = 1000;
+  const limit = objectType.limit || 1000;
   let skip = 0; // Define API endpoint.
 
-  let apiEndpoint = `${apiURL}/${bucketSlug}/objects?type=${objectType}`;
+  let apiEndpoint = `${apiURL}/${bucketSlug}/objects?type=${objectType.path}`;
 
   if (apiAccess.hasOwnProperty('read_key') && apiAccess.read_key.length !== 0) {
     apiEndpoint = apiEndpoint + `&read_key=${apiAccess.read_key}`;
@@ -33,7 +33,7 @@ module.exports = async ({
   const documents = await axios(apiEndpoint); // Check for empty object type
 
   if (documents.data.objects === undefined) {
-    console.error(`${objectType} error: ${documents.message}`);
+    console.error(`${objectType.name} error: ${documents.message}`);
     console.timeEnd(timeLabel);
     return objects;
   }
@@ -58,13 +58,13 @@ module.exports = async ({
       if (response.data.objects) {
         objects = concat(objects, response.data.objects);
       } else {
-        console.error(`${objectType} fetch issue: ${documents.message}`);
+        console.error(`${objectType.name} fetch issue: ${documents.message}`);
         break;
       }
     }
   }
 
-  console.log(`Fetched ${objects.length} ${objects.length === 1 ? 'object' : 'objects'} for object type: ${objectType}`);
+  console.log(`Fetched ${objects.length} ${objects.length === 1 ? 'object' : 'objects'} for object type: ${objectType.name}`);
   console.timeEnd(timeLabel); // Map and clean data.
 
   if (objects.length > 0) {
