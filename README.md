@@ -32,7 +32,7 @@ plugins: [
     resolve: `gatsby-source-cosmicjs`,
     options: {
       bucketSlug: ``,
-      objectTypes: [`posts`],
+      objectTypes: [{name:`Posts`, path: `posts`, limit: 10}],
       // If you have enabled read_key to fetch data (optional).
       apiAccess: {
         read_key: ``,
